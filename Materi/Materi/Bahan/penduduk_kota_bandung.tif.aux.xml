@@ -1,0 +1,12 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <Description>idn_pop_2025_CN_100m_R2025A_v1</Description>
+    <Metadata>
+      <MDI key="STATISTICS_MINIMUM">0</MDI>
+      <MDI key="STATISTICS_MAXIMUM">218.06214904785</MDI>
+      <MDI key="STATISTICS_MEAN">131.45231602342</MDI>
+      <MDI key="STATISTICS_STDDEV">58.601303315885</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">53.05</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
