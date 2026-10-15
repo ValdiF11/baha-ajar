@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:import": "node scripts/import-materials.mjs",
+    "db:cache": "node scripts/setup-isochrone-cache.mjs",
     "test:raster": "node --test tests/population-raster.test.mjs tests/population-overlay.test.mjs",
-    "test:analysis": "node --test tests/analysis.test.mjs tests/sni.test.mjs"
+    "test:analysis": "node --test tests/analysis.test.mjs tests/sni.test.mjs tests/isochrone-cache.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

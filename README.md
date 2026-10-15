@@ -35,7 +35,15 @@ Isochrone tersedia pada 5, 10, 15, 30, 45 menit, atau custom 1–120 menit, deng
 
 Konfigurasikan `VALHALLA_URL` pada server. Pengembangan lokal telah menggunakan `https://valhalla1.openstreetmap.de` atas izin pengguna untuk mengirim koordinat fasilitas ke layanan tersebut. Untuk produksi, atur variabel ini di hosting atau gunakan server Valhalla sendiri. Server demo publik menerapkan fair use dan dapat membatasi permintaan; jangan memperlakukannya sebagai layanan dengan jaminan ketersediaan.
 
-Endpoint `POST /api/analysis/isochrone` memproses satu titik per permintaan dengan batas waktu 25 detik. Pilihan semua titik berjalan berurutan dengan jeda minimal 1,1 detik, menampilkan progres, dan dapat dibatalkan. Hasil sementara dibersihkan jika proses gagal atau dibatalkan. Mengganti titik menghapus hasil sebelumnya. Tombol Hapus analisis menghapus kedua hasil tanpa mengubah data Neon.
+Endpoint `POST /api/analysis/isochrone` memproses satu titik per permintaan dengan batas waktu 25 detik. Pilihan semua titik berjalan berurutan, menampilkan progres, dan dapat dibatalkan. Setelah perhitungan baru ada jeda 1,1 detik sebelum titik berikutnya untuk menjaga penggunaan layanan publik; hasil dari cache langsung dilanjutkan tanpa jeda. Hasil sementara dibersihkan jika proses gagal atau dibatalkan. Mengganti titik menghapus hasil sebelumnya. Tombol Hapus analisis menghapus tampilan hasil tanpa mengubah data Neon maupun cache.
+
+## Cache isochrone
+
+Jalankan `npm run db:cache` setelah mengatur `DATABASE_URL`. Perintah ini membuat tabel `isochrone_cache` jika belum ada dan menghapus entri yang kedaluwarsa. Tabel sudah disiapkan pada Neon pengembangan saat fitur ini dibuat.
+
+GeoJSON isochrone yang berhasil disimpan di Neon selama 24 jam, sehingga tetap tersedia setelah reload atau restart server. Kunci cache mencakup koordinat fasilitas, moda, waktu, alamat layanan Valhalla, versi parameter, dan pengaturan kontur. Perubahan koordinat atau pilihan analisis memakai entri berbeda. Hasil gagal atau respons yang tidak sesuai bentuk GeoJSON poligon tidak disimpan. Entri yang habis masa simpannya dihitung ulang pada permintaan berikutnya. Data cache yang kedaluwarsa diabaikan; jalankan `npm run db:cache` lagi untuk membersihkan entri lama yang tidak dipakai lagi.
+
+Respons sukses memberi header `X-Isochrone-Cache`: `HIT` bila memakai data tersimpan, `MISS` setelah perhitungan baru disimpan, atau `BYPASS` bila hasil berhasil tetapi penyimpanan cache tidak tersedia. Gangguan tabel cache tidak menghalangi perhitungan baru. Aplikasi menghilangkan jeda antar-titik hanya pada `HIT`; permintaan pertama tetap bergantung pada kecepatan Valhalla dan semua titik tersimpan masih dibaca satu per satu dari Neon.
 
 Kedua endpoint menerima JSON `{ "pointId": "all" | 0, "value": 500, "mode": "pedestrian" | "auto" | "bicycle" }`. `value` adalah meter untuk buffer dan menit untuk isochrone; isochrone hanya menerima indeks titik, dan aplikasi mengatur pemrosesan semua titik. Uji validasi: `npm run test:analysis`.
 

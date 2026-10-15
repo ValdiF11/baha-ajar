@@ -123,7 +123,7 @@ export default function MapAnalysis({ map, points, populationCells, selected, on
         if (controller.signal.aborted) return;
         combined.features.push(...data.features);
         showArea(kind, combined);
-        if (index < ids.length - 1) await new Promise<void>((resolve, reject) => {
+        if (index < ids.length - 1 && response.headers.get("X-Isochrone-Cache") !== "HIT") await new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(() => { controller.signal.removeEventListener("abort", abort); resolve(); }, 1100);
           function abort() { clearTimeout(timeout); reject(new DOMException("Dibatalkan", "AbortError")); }
           controller.signal.addEventListener("abort", abort, { once: true });
